@@ -1,6 +1,8 @@
 import { file } from "bun";
+import { extname, resolve, sep } from "node:path";
 
-const PORT = 3000;
+const PORT = Number(Bun.env.PORT ?? 3000);
+const publicDir = resolve(import.meta.dir, ".devcontainer", "public");
 
 // MIME type mapping
 const mimeTypes: Record<string, string> = {
@@ -19,18 +21,23 @@ Bun.serve({
   port: PORT,
   async fetch(req) {
     const url = new URL(req.url);
-    let path = url.pathname;
-
-    if (path === "/") {
-        path = "/index.html";
+    let relativePath: string;
+    try {
+      relativePath = decodeURIComponent(url.pathname.slice(1)) || "index.html";
+    } catch {
+      return new Response("Invalid URL path", { status: 400 });
     }
 
-    const filePath = `.${path}`;
+    const filePath = resolve(publicDir, relativePath);
+    if (filePath !== publicDir && !filePath.startsWith(`${publicDir}${sep}`)) {
+      return new Response("Forbidden", { status: 403 });
+    }
+
     const targetFile = file(filePath);
 
     if (await targetFile.exists()) {
       // Get file extension
-      const ext = path.substring(path.lastIndexOf("."));
+      const ext = extname(filePath).toLowerCase();
       
       // Handle TypeScript transpilation for browser modules
       if (ext === ".ts") {
