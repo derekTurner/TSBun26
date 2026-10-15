@@ -1,15 +1,24 @@
 function addNumbers(): void {
 
-    const input1 = document.getElementById("number1") as HTMLInputElement;
-    const input2 = document.getElementById("number2") as HTMLInputElement;
-    const output = document.getElementById("result") as HTMLInputElement;
+    const units: NodeListOf<HTMLElement> = document.getElementsByName("unit-price") as NodeListOf<HTMLElement>;
+    const quantities: NodeListOf<HTMLElement> = document.getElementsByName("quantity") as NodeListOf<HTMLElement>;
+    
+    const output1 = document.getElementById("payment") as HTMLInputElement;
+    const output2 = document.getElementById("discounted") as HTMLInputElement;
+    let sum: number = 0;
 
-    const number1: number = Number(input1.value);
-    const number2: number = Number(input2.value);
+    for (let i = 0; i < units.length; i++) {
+        const unitPrice = parseFloat(units[i].textContent || "0");
+        const quantity = parseFloat(quantities[i].textContent || "0");
 
-    const sum: number = number1 + number2;
+        sum += unitPrice * quantity ;
 
-    output.value = sum.toString();
+    }
+    output1.innerText = sum.toString();
+    output2.innerText = (sum * 0.75).toString(); // Apply 25% discount
+    console.log( sum);
 }
 
-document.getElementById("add-button")?.addEventListener("click", addNumbers);
+document.getElementById("calculate-total")?.addEventListener("click", addNumbers);
+
+
