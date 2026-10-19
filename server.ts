@@ -2,7 +2,7 @@ import { file } from "bun";
 import { extname, resolve, sep } from "node:path";
 
 const PORT = Number(Bun.env.PORT ?? 3000);
-const publicDir = resolve(import.meta.dir, ".devcontainer", "public");
+const publicDir = resolve(import.meta.dir, ".devcontainer", "republic");
 
 // MIME type mapping
 const mimeTypes: Record<string, string> = {
